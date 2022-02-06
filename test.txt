@@ -1,0 +1,19 @@
+//C	p/b/m/f/v/w/t/s/z/d/n/l/k/g/x/y/j/'
+//V	i/u/a
+//Structure (C(C(C)))V(V)C(CVV(C)(C))
+
+// Sound change format:
+//	_thing1_ > thing2 & more > less
+
+// Entry must be in format
+//	word - conlang_word - (older forms)
+
+First Word	-	wack		-	2. pit > wack
+Second Word	-	swack		-	1. spit > swack
+Third Word	-	wacky		-	3. pity > wacky
+Fourth Word	-	spittle		-
+Fifth Word	- 	bulbasaur
+
+1. _pit > wack
+2. pit > wack
+3. pit_ > wack
