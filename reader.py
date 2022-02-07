@@ -3,15 +3,16 @@ from re import finditer
 
 class Reader():
 	def __init__(self, infile, outfile="./outfile.txt"):
+		self.infile = infile
 		self.outfile = outfile
-		self.text_file = []
+		self.readFile(infile)
+
+	def readFile(self, infile):
 		self.entries = []
 		self.shifts = []
 		self.entries_versions = []
 		self.shifts_versions = []
-		self.readFile(infile)
-
-	def readFile(self, infile):
+		
 		with open(infile, "r") as file:
 			self.text_file = [line.strip() for line in file.readlines()]
 			for line in self.text_file:
@@ -22,20 +23,22 @@ class Reader():
 				# Find sound changes
 				elif self.__isShift(line):
 					# Remove number from start of sound change
-					self.shifts.append(line)
+					self.shifts.append(line.split(".")[1].strip())
 					
 				# All others must be entries
 				else:
 					self.entries.append(line)
 
-	def saveToFile(self, outfile):
+	def saveToFile(self, outfile, quit=False):
 		self.applyChanges()
 		# Overwrite self.text_file with new entries and shifts
 		with open(outfile, "w") as file:
 			for line in self.text_file:
 				file.write(line + "\n")
+		if not quit:
+			self.readFile(self.infile)
 
-	def save(self):
+	def save(self, quit=False):
 		# Wrapper to allow saving with default filename
 		self.saveToFile(self.outfile)
 
@@ -44,7 +47,7 @@ class Reader():
 		if not self.shifts_versions and not self.entries_versions:
 			return
 
-		# Go through and compare oldest _versions with newest, any differences should be replaced in the textfile
+		# Go through and compare oldest entries_versions with newest, any differences should be replaced in the textfile
 		for original, current in zip(self.entries_versions[0], self.entries):
 			if original != current:
 				for index, line in enumerate(self.text_file):
@@ -55,12 +58,14 @@ class Reader():
 		# Append space if not shifts already at bottom
 		if self.text_file[-1].strip() and not self.__isShift(self.text_file):
 			self.text_file.append("")
+
 		# Save all new sound shifts at the bottom of the textfile
 		for index, shift in enumerate(self.shifts, start=1):
 			saved = False
 			for line in self.text_file:
-				if line.startswith(shift):
+				if self.__isShift(line) and shift == line.split(". ")[1]:
 					saved = True
+					break
 			if not saved:
 				self.text_file.append(str(index) + ". " + shift)
 
@@ -71,12 +76,12 @@ class Reader():
 		elif self.entries_versions or self.shifts_versions:
 			raise BaseException("Shifts not in sync with entries")
 		elif self.shifts:
+			number = str(len(self.shifts))
 			shift = self.shifts.pop()
-			number, sound_change = [item.strip() for item in shift.split(".")]
-			
+
 			# Enact sound change backwards
-			dictionary = self.getChangeDict(self.__reverseSoundChange(sound_change))
-			self.updateEntries(dictionary, note_old=False)	
+			dictionary = self.getChangeDict(self.__reverseSoundChange(shift))
+			self.updateEntries(dictionary, note_old=False)
 
 			# Remove outdated lines from authoritative form
 			temp_text = self.text_file[:]
@@ -97,12 +102,11 @@ class Reader():
 							new_notes.append(note)
 					entry_list[2] = ','.join(new_notes)
 					self.entries[self.entries.index(entry)] = "-".join(entry_list)
-					print("-".join(entry_list))
 			
 	def getChangeDict(self, sound_changes):
 		# Puts sound change string into list form to process simultanious changes
 		changes_dict = {}
-		sound_changes = [item.strip() for item in sound_changes.split("&")]
+		sound_changes = [item.strip() for item in sound_changes.split("&") if item.strip() != ""]
 
 		for sound_change in sound_changes:
 			changes_dict[sound_change] = self.__searchEntries(sound_change)
@@ -121,12 +125,12 @@ class Reader():
 		for key in changes_dict:
 			for index in changes_dict[key]:
 				self.entries[index] = self.__changeEntry(key, self.entries[index], note_old=note_old)
+
 	def soundChange(self, sound_change, conword):
 		rule, sub = self.__listConvert(sound_change)
 		rule, start, end = self.__readRule(rule)
 
 		if rule in conword:
-			#print(self.shifts)
 			if start and end and conword == rule:
 				conword = sub
 
@@ -134,7 +138,11 @@ class Reader():
 				conword = self.__pasteOver(conword, rule, sub, 0)
 
 			elif not start and end and conword.endswith(rule) and not conword.startswith(rule):
-				conword = self.__pasteOver(conword, rule, sub, len(conword)-len(sub)+1)
+				if len(sub) < len(rule):
+					start = (len(conword) - 1) - len(sub)
+				else:
+					start = len(conword) - len(sub) + 1
+				conword = self.__pasteOver(conword, rule, sub, start)
 
 			elif not start and not end:
 				for match in self.__hasInside(rule, sub, conword):
@@ -156,7 +164,6 @@ class Reader():
 		for match in instances:
 			# Check to see we don't return any initial or final sounds
 			if match != 0 and match+len(sub)+1 != len(conword):
-				#print(f'conword: {conword}, len: {len(conword)}, match: {match}, len_sub: {len(sub)}')
 				indicies.append(match)
 		return indicies
 
@@ -236,15 +243,18 @@ class Reader():
 			return [change[1], change[0]]
 
 	def __reverseSoundChange(self, sound_change):
-		changes = self.__listConvert(sound_change)
-		sub, start, end = self.__readRule(changes[0])
-		new_rule = changes[1]
-		if not start:
-			new_rule = "_" + new_rule
-		if not end:
-			new_rule += "_"
+		final_list = []
+		for change in sound_change.split("&"):
+			change_list = self.__listConvert(change)
+			sub, start, end = self.__readRule(change_list[0])
+			new_rule = change_list[1]
+			if not start:
+				new_rule = "_" + new_rule
+			if not end:
+				new_rule += "_"
+			final_list.append(new_rule + " > " + sub)
 
-		return new_rule + " > " + sub
+		return ' & '.join(final_list)
 
 	def __isShift(self, line):
 		# Should be formatted like N. [sound change rule]
@@ -253,21 +263,38 @@ class Reader():
 		return line.split(". ")[0].isdigit()
 
 
-if __name__ == "__main__":
-	phonemic = Reader("./test.txt")
-	phonemic.undoChange()
-	phonemic.save()
+def testUndo(reader):
+	reader.undoChange()
+	reader.save()
 
-'''
+def testMultipleSoundChange(reader):
+	sound_change = "pit > wack & _pit > wack"
+	dictionary = reader.getChangeDict(sound_change)
+	reader.updateEntries(dictionary)
+	reader.save()
+
+def testSoundChange(reader):
 	patterns = ["_pit", "pit", "pit_", "_pit_"]
 	for pattern in patterns:
 		sound_change = pattern + " > wack" # looks like "pit > wack"
-		dictionary = phonemic.getChangeDict(sound_change) # Dictionary of words that can be changed
+		dictionary = reader.getChangeDict(sound_change) # Dictionary of words that can be changed
 
-		for old_word, new_word in phonemic.previewChanges(dictionary):  # Generator to display them all
-			print(f"old_word: {old_word}, new_word: {new_word}") 		# 	can edit to confirm/deny
+		for old_word, new_word in reader.previewChanges(dictionary):  # Generator to display them all
+			print(f"sound_change: {sound_change}, old_word: {old_word}, new_word: {new_word}") 		# 	can edit to confirm/deny
 
-		phonemic.updateEntries(dictionary) # Apply all
+		reader.updateEntries(dictionary) # Apply all
 
-	phonemic.save() # Save everything
-'''
+	reader.save() # Save everything
+
+if __name__ == "__main__":
+	reader = Reader("./test.txt")
+	
+	# Doing more than one test and expecting continuity but not getting it?
+	#	Open the subsequent tests with Reader("./outfile.txt")
+	#	Calls to 'save' reload the infile
+	#	Alternatively, before the method call Reader.readFile("./outfile.txt")
+
+	#testSoundChange(reader)
+	testMultipleSoundChange(reader)
+	reader.readFile("./outfile.txt")
+	testUndo(reader)

@@ -8,12 +8,9 @@
 // Entry must be in format
 //	word - conlang_word - (older forms)
 
-First Word	-	wack		-	2. pit > wack
-Second Word	-	swack		-	1. spit > swack
+First Word	-	pit			-
+Second Word	-	spit		-
 Third Word	-	pity		-
 Fourth Word	-	spittle		-
-Fifth Word	- 	bulbasaur
-
-1. _pit > wack
-2. pit > wack
+Fifth Word	- 	bulbasaur	-
 
