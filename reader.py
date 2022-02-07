@@ -138,11 +138,7 @@ class Reader():
 				conword = self.__pasteOver(conword, rule, sub, 0)
 
 			elif not start and end and conword.endswith(rule) and not conword.startswith(rule):
-				if len(sub) < len(rule):
-					start = (len(conword) - 1) - len(sub)
-				else:
-					start = len(conword) - len(sub) + 1
-				conword = self.__pasteOver(conword, rule, sub, start)
+				conword = self.__pasteOver(conword, rule, sub, len(conword) - len(rule))
 
 			elif not start and not end:
 				for match in self.__hasInside(rule, sub, conword):
@@ -286,6 +282,11 @@ def testSoundChange(reader):
 
 	reader.save() # Save everything
 
+def testEndSubs(reader):
+	dictionary = reader.getChangeDict("_pit > wack & _pat > putty & _puck > pu")
+	reader.updateEntries(dictionary)
+	reader.save()
+
 if __name__ == "__main__":
 	reader = Reader("./test.txt")
 	
@@ -295,6 +296,7 @@ if __name__ == "__main__":
 	#	Alternatively, before the method call Reader.readFile("./outfile.txt")
 
 	#testSoundChange(reader)
-	testMultipleSoundChange(reader)
-	reader.readFile("./outfile.txt")
-	testUndo(reader)
+	#testMultipleSoundChange(reader)
+	testEndSubs(reader)
+	#reader.readFile("./outfile.txt")
+	#testUndo(reader)
