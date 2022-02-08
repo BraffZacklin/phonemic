@@ -1,6 +1,11 @@
 # phonemic
 
 This is a tool designed to help with sound changes. See the example file for help, or the CLI -h help menu.
+This tool has been designed to have minimal required functionality and not much else; more may be added later as I see fit (one such idea is an interactive mode), but this is dependant on me seeing a need for it in my own conlanging. 
+
+# Installation
+
+Installation is as simple as running 'git clone https://github.com/BraffZacklin/phonemic', however if you're running Linux I would recommend creating a symlink to the tool. If you clone the repo to \~/bin as phonemic.dir, and run 'ln -s phonemic.dir/cli.py phonemic', when you next reload your terminal you should be able to run it directly from command line in any directory with simply 'phonemic'
 
 # text file syntax
 
@@ -24,9 +29,38 @@ As mention above, sound changes have a specific format. The symbols used in soun
 - "\_": used as a wildcard, e.g. "\_pit > wack" indicates changing any words ending in 'pit' to end in 'wack' -- this sound change would leave words like 'pit', 'pity', and 'spittle' unchanged, but would change 'spit' to 'swack'.
 - "&": indicates multiple simultanious sound changes
 
+Some examples of sound changes and their effects would be:
+
+- "pit > wack"
+pit > wack
+pity unchanged
+spit unchanged
+spittle unchanged
+
+- "\_pit > wack"
+spit > swack
+pit unchanged, etc.
+
+- "pit_ > wack"
+pity > wacky
+
+- "pit > wack & \_pit\_ > wack"
+pit > wack
+spittle > swacktle
+
 # CLI
 
-TBA
+Argparse has provided a help menu for the CLI tool; the CLI tool is barebones for now. 
+The only required argument is the infile; if an outfile (which can be the same as your infile, if you're brave enough) is not supplied, you will be asked later. For convenience, below are the possible arguments:
+
+- Infile -- positional, and required
+- -o -- outfile, where to save output to
+- -s -- save to input, set outfile to the same as infile
+- -c -- sound change to execute
+- -u -- undo, undoes the last sound change
+- -e -- explicit, when asked to confirm a given sound change, do not (as is default) take a blank response as affirmative, but rather repeatedly nag until either a 'y' or 'n' is given.
+
+Note that using -c (sound change) and -u (undo) together will result in the last sound change being undone, and the given sound change being applied.
 
 # To-Do
 1. Add CLI

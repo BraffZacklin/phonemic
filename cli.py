@@ -23,9 +23,10 @@ def nagStr(message):
 parser = argparse.ArgumentParser(description="Perform sound changes on text files")
 parser.add_argument('infile', type=str, help="a file to read from")
 parser.add_argument('-o', metavar="OUTFILE", dest='outfile', type=str, help="a file to write to")
-parser.add_argument('-s', metavar="SOUND_CHANGE", dest='sound_change', type=str, help="a sound change to enact")
+parser.add_argument('-c', metavar="SOUND_CHANGE", dest='sound_change', type=str, help="a sound change to enact")
 parser.add_argument('-u', dest='undo', action='store_const', const=True, default=False, help="Undo previous sound change")
 parser.add_argument('-e', dest='explicit', action='store_const', const=True, default=False, help="Don't treat blank response as 'yes' for transformation confirmation")
+parser.add_argument('-s', dest='save_to_input', action='store_const', const=True, default=False, help="Set the outfile to the same as the infile")
 args = parser.parse_args()
 
 reader = Reader(args.infile)
@@ -56,7 +57,9 @@ if args.sound_change:
 	changed = True
 
 if changed:
-	if not args.outfile:
+	if args.save_to_input:
+		outfile = args.infile
+	elif not args.outfile:
 		outfile = nagStr("Enter path to outfile: ")
 	else:
 		outfile = args.outfile
