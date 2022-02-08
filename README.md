@@ -6,7 +6,7 @@ This is a tool designed to help with sound changes. See the example file for hel
 
 This tool specifically works with a pre-defined format for text files. Fortunately, it's not too complicated.
 
-There are 3 particular special symbols that the text file format uses:
+There are 3 particular symbols that the text file format uses:
 
 - "-": used to separate parts of an entry, which must be at least a gloss and a word arranged like "gloss - word", and previous versions of a word are noted after a second tac, "gloss - word - older versions", where the older versions have a number indicating what sound change they belong to and show the old word and the new word, e.g. "1. ursus < hrktos", of which there may be multiple separated by commas
 - "N.": used to indicate sound changes chronologically 
@@ -14,7 +14,7 @@ There are 3 particular special symbols that the text file format uses:
 
 These above symbols should not be used anywhere in your gloss. 
 
-Apart from comments, which are saved and ignored, there are two other types of lines in the textfile: sound change notes, which are defined as starting with N., and entries, which right now is everything not a comment or a sound change note -- the program expects entries to contain at least one tac "-", before which is the gloss (e.g. 2SG) and after which is the word (e.g. "You").
+Apart from comments, which are saved and ignored, there are two other types of lines in the textfile: sound change notes, which are defined as starting with N. (that is, a number like 128 and a full stop), and entries, which right now is everything not a comment or a sound change note -- the program expects entries to contain at least one tac "-", before which is the gloss (e.g. 2SG) and after which is the word (e.g. "You").
 
 # CLI
 
