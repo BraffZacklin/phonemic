@@ -34,17 +34,13 @@ Some examples of sound changes and their effects would be:
 - "pit > wack"
 
 pit > wack
-
 pity unchanged
-
 spit unchanged
-
 spittle unchanged
 
 - "\_pit > wack"
 
 spit > swack
-
 pit unchanged, etc.
 
 - "pit_ > wack"
@@ -54,7 +50,6 @@ pity > wacky
 - "pit > wack & \_pit\_ > wack"
 
 pit > wack
-
 spittle > swacktle
 
 # CLI
