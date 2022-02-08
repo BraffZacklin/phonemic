@@ -66,7 +66,5 @@ The only required argument is the infile; if an outfile (which can be the same a
 Note that using -c (sound change) and -u (undo) together will result in the last sound change being undone, and the given sound change being applied.
 
 # To-Do
-1. Add CLI
-2. Add CLI to README.md
-3. Allow comments after words and sound changes
-4. Add explicit check for entries as opposed to current assumption model
+1. Allow comments after words and sound changes
+2. Add explicit check for entries as opposed to current assumption model
