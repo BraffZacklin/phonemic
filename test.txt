@@ -8,10 +8,10 @@
 // Entry must be in format
 //	word - conlang_word - (older forms)
 
-First Word	 -	pit			-	
-Second Word	 -	spit		-	
-Third Word	 -	pity		-	
-Fourth Word	 -	spittle		-	
-Fifth Word	 - 	bulbasaur	-	
-Sixth Word	 -	spat
-Seventh Word -	spuck
+First Word	 -	pit			- 	
+Second Word	 -	spit		- 	
+Third Word	 -	pity		- 	
+Fourth Word	 -	spittle		- 	
+Fifth Word	 - 	bulbasaur	- 	
+Sixth Word	 -	spat		- 
+Seventh Word -	spuck		- 

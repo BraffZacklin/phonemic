@@ -1,4 +1,3 @@
-#!/usr/bin/python3
 from re import finditer
 
 class Reader():
@@ -151,8 +150,8 @@ class Reader():
 			for index in dictionary[key]:
 				old_word = self.__extractConword(self.entries[index])
 				new_word = self.soundChange(key, old_word)
-				yield old_word, new_word
-		return None, None
+				yield old_word, new_word, key, index
+		return None, None, None, None
 
 	def __hasInside(self, rule, sub, conword):
 		instances = [m.start() for m  in finditer(rule, conword)]
@@ -275,7 +274,7 @@ def testSoundChange(reader):
 		sound_change = pattern + " > wack" # looks like "pit > wack"
 		dictionary = reader.getChangeDict(sound_change) # Dictionary of words that can be changed
 
-		for old_word, new_word in reader.previewChanges(dictionary):  # Generator to display them all
+		for old_word, new_word, key, index in reader.previewChanges(dictionary):  # Generator to display them all
 			print(f"sound_change: {sound_change}, old_word: {old_word}, new_word: {new_word}") 		# 	can edit to confirm/deny
 
 		reader.updateEntries(dictionary) # Apply all

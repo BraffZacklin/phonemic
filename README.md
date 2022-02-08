@@ -16,6 +16,14 @@ These above symbols should not be used anywhere in your gloss.
 
 Apart from comments, which are saved and ignored, there are two other types of lines in the textfile: sound change notes, which are defined as starting with N. (that is, a number like 128 and a full stop), and entries, which right now is everything not a comment or a sound change note -- the program expects entries to contain at least one tac "-", before which is the gloss (e.g. 2SG) and after which is the word (e.g. "You").
 
+# Sound Changes
+
+As mention above, sound changes have a specific format. The symbols used in sound changes are as follows:
+
+- ">" or "<": used to indicate direction of a sound change
+- "\_": used as a wildcard, e.g. "\_pit > wack" indicates changing any words ending in 'pit' to end in 'wack' -- this sound change would leave words like 'pit', 'pity', and 'spittle' unchanged, but would change 'spit' to 'swack'.
+- "&": indicates multiple simultanious sound changes
+
 # CLI
 
 TBA
